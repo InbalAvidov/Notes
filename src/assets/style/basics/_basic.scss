@@ -20,14 +20,8 @@ html {
 
 body {
     margin: 0;
-    overflow: hidden;
 }
 
-.main-app {
-    background-color: $bgc;
-    padding-bottom: em(150px);
-    flex: 1;
-}
 
 ::-webkit-scrollbar {
     width: 7px;
@@ -63,22 +57,20 @@ h6 {
     line-height: lh(40px, 29px);
     color: $text;
     font-family: open-sans;
-    font-weight: 600;
 }
 
 p {
     margin: 0;
 }
 
-
 ul {
+    padding:  0 ;
     list-style: none;
-    margin: 0;
-    padding: 0;
 }
 
 a {
     text-decoration: none;
+    color: black;
 }
 
 button {
@@ -86,4 +78,21 @@ button {
     cursor: pointer;
     border: none;
     font-size: 1.3em;
+}
+
+input,
+textarea {
+    box-shadow: rgba(97, 97, 97, 0.24) 0px 3px 25px;
+    border-radius: 5px;
+    border: none;
+    padding: 10px;
+    font-size: 1.2em;
+    font-family: open-sans;
+    font-weight: 600;
+    margin: 0 20px;
+}
+
+pre{
+    font-family: open-sans;
+    font-weight: 600;
 }

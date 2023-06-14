@@ -1,31 +1,21 @@
-import { useEffect, useState } from "react"
-import { NotePreview } from "./note-preview"
+// import { useEffect, useState } from "react"
+// import { useSelector } from "react-redux"
+// import { loadNotes } from "../store/actions"
+// import { NotePreview } from "./note-preview"
+// import { noteService } from "../services/note-service"
 
-export function NoteList({ notes, loadNotes }) {
-    const [pinned, setPinned] = useState([])
-    const [unPinned, setUnPinned] = useState([])
+import { NotePreview } from "./note-preview";
 
-    useEffect(() => {
-        filterByPin()
-    }, [notes])
+export function NoteList({ openCloseModal, notes }) {
 
-    function filterByPin() {
-        setPinned(notes.filter(note => note.isPinned === true))
-        setUnPinned(notes.filter(note => note.isPinned === false))
-    }
-
-    return <div className="note-list">
-        {pinned.length > 0 &&
-            <div className="pinned-note">
-                <p>pinned <span className="fa-solid fa-pin"></span></p>
-                {pinned.map((note, idx) => <NotePreview key={idx} note={note} loadNotes={loadNotes} />)}
-            </div>
-            }
-        {unPinned.length > 0 && <div className="un-pinned">
-            {
-                unPinned.map((note, idx) => <NotePreview key={idx} note={note} loadNotes={loadNotes} />)
-            }
-        </div>}
+    return <div className="note-list ">
+        {notes.length > 0 ?
+            notes.map(note => (
+                <NotePreview currNote={note} openCloseModal={openCloseModal} />
+            ))
+            :
+            <h2>No notes, create a new one now!</h2>
+        }
     </div>
 
 }

@@ -1,0 +1,40 @@
+.filter-area {
+   display: flex;
+
+
+   .search-bar {
+      background-color: white;
+      position: relative;
+      display: flex;
+      align-items: center;
+      flex: 1;
+      max-width: 500px;
+   }
+
+   .search {
+      background-color: inherit;
+      position: absolute;
+      right: 7%;
+   }
+
+   input:not(.pin) {
+      background-color: inherit;
+      outline: none;
+      padding: 12px;
+      width: 450px;
+   }
+
+   .pin-filter-box {
+      border: 2px solid rgba(216, 216, 216, 0.443);
+      border-radius: 10px;
+      padding: 2.5px 12px;
+      display: flex;
+      align-items: center;
+
+      &.pinned {
+         background-color: $brand-color ;
+         border: none;
+         padding: 4.5px 14px;
+      }
+   }
+}

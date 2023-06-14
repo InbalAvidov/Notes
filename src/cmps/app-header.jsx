@@ -1,13 +1,43 @@
+import { useSelector } from 'react-redux'
 import note from '../assets/imgs/note.png'
 
+import { NoteFilter } from './note-filter'
+import { NavLink } from 'react-router-dom'
+import { logout } from '../store/actions'
+import { useEffect, useState } from 'react'
+
 export function AppHeader() {
+    const user = useSelector((storeState => storeState.notesModule.user))
+    const [content, setContent] = useState('')
+
+    useEffect(()=>{
+        if(user) setContent(user.userName)
+    },[user])
+
+    function onLogout() {
+        logout()
+    }
+
+    function changeContent(content){
+        setContent(content)
+    }
+
     return (
-        <header>
-            <svg ole="img" height="30" width="30" aria-hidden="true" viewBox="0 0 24 24" fill="#525252" focusable="false" >
-                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
-            </svg>
-            <img src={note}/>
-            <h1>Notes</h1>
+        <header className='full'>
+            <div className='nav-area'>
+                <img src={note} />
+                <h1>Notes</h1>
+            </div>
+            <NoteFilter />
+            {user ?
+                <div className='user-icon' onMouseOver={() => changeContent('logout')} onMouseLeave={() => changeContent(user.userName)} onClick={onLogout}>
+                    <h2>{content}</h2>
+                </div>
+                :
+                <NavLink to='/login' className='login-btn'>
+                    Login
+                </NavLink>
+            }
         </header>
     )
 }

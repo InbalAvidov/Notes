@@ -1,75 +1,100 @@
-import { useEffect, useState } from "react"
-import { NoteService } from "../services/note-service"
+import { useState } from "react"
+import { faImage, faPlayCircle, faCircleCheck, faClipboard } from '@fortawesome/free-regular-svg-icons'
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
-export function NoteAdd({ loadNotes, note, setIsEdit }) {
-    const [noteType, setNoteType] = useState('note-txt')
-    const [content, setContent] = useState({ title: '', txt: '' })
+import { noteService } from "../services/note-service"
+import { uploadService } from "../services/upload.service"
+import { saveNote, updateNote } from "../store/actions"
 
-    useEffect(() => {
-        if (!note) return
-        setContent(NoteService.getNoteContent(note))
-    }, [])
+export function NoteAdd({ openCloseModal, editNote }) {
+    const [noteType, setNoteType] = useState('txt')
+    const [note, setNote] = useState(editNote || noteService.getEmptyNote(noteType))
 
-    function onAddNote() {
-        NoteService.addNote(content, noteType, false).then(note => {
-            setContent({ title: '', txt: '' })
-            loadNotes()
-        })
-    }
-
-    function onSaveNote(ev) {
-        ev.stopPropagation()
-        NoteService.addNote(content, note.type, note.isPinned).then(() =>
-            NoteService.remove(note.id))
-            .then(() => {
-                setIsEdit(false)
-                loadNotes()
-            })
-
-    }
-
-    function handleChange({ target }) {
+    function handleChange({ target }, idx) {
         const { value, name: field } = target
-        setContent((prevContent) => ({ ...prevContent, [field]: value }))
-    }
-
-    function onImgInput(ev) {
-        loadImageFromInput(ev, setContent)
-    }
-
-    function loadImageFromInput(ev, onImageReady) {
-        const reader = new FileReader()
-        reader.onload = (event) => {
-            let img = new Image()
-            img.src = event.target.result
-            img.onload = () => onImageReady(img.src)
+        if (noteType === 'todos' && idx !== undefined) {
+            note.todos[idx] = value
+            setNote((prevContent) => ({ ...prevContent, 'todos': note.todos }))
         }
-        reader.readAsDataURL(ev.target.files[0])
+        else setNote((prevContent) => ({ ...prevContent, [field]: value }))
     }
 
-    return <div className="note-add flex space-between">
-        <div className="note-add-input">
-            <input className="title" placeholder="Title" onChange={handleChange} value={content.title} name="title" />
-            <input className="text" placeholder={noteType === 'note-img' ? "upload a photo" : noteType === 'note-todos' ? 'Task,task...' : noteType === 'note-txt' ? 'text...' : 'https://youtu.be/XXXXXXX'} onChange={handleChange} value={content.txt} name="txt" />
-        </div>
-        {!note && <div className="note-add-btns">
-            <button onClick={() => setNoteType('note-img')} className={noteType === 'note-img' ? 'active' : ''}>
-                <input id="img" style={{ display: 'none' }} type="file" className="file-input btn" onChange={onImgInput} />
-                <label htmlFor="img" className="fa-regular fa-image" title="Upload photo"></label>
-            </button>
-            <button title="Video" onClick={() => setNoteType('note-video')} className={noteType === 'note-video' ? 'active' : ''}><span className="fa-solid fa-play"></span></button>
-            <button title="List" onClick={() => setNoteType('note-todos')} className={noteType === 'note-todos' ? 'active' : ''}><span className="fa-solid fa-list"></span></button>
-            <button title="Text" onClick={() => setNoteType('note-txt')} className={noteType === 'note-txt' ? 'active' : ''}><span className="fa-solid fa-edit"></span></button>
-            <button className="note-add-btn" onClick={onAddNote}>Add</button>
-        </div>}
-        {note &&
-            <div>
-                <button onClick={onSaveNote}><span className="fa-solid fa-done" ></span></button>
-                {note.type === 'note-img' &&
-                    <button>
-                        <input id="img" style={{ display: 'none' }} type="file" className="file-input btn" onChange={onImgInput} />
-                        <label htmlFor="img" className="fa-regular fa-image" title="Upload photo"></label>
-                    </button>}
-            </div>}
-    </div>
+    async function onUploadImg(ev) {
+        try {
+            await onSelectImg(ev)
+        } catch (err) {
+            console.log('err:', err)
+        }
+    }
+
+    async function onSelectImg(ev) {
+        try {
+            const imgUrl = await uploadService.uploadImg(ev)
+            setNote((prevContent) => ({ ...prevContent, url: imgUrl }))
+            return imgUrl
+        } catch (err) {
+            console.log('Cant set image', err)
+        }
+    }
+
+    async function onSaveNote() {
+        try {
+            if (note._id) await updateNote(note)
+            else await saveNote(note, noteType)
+        } catch (err) {
+            console.log(err)
+        }
+        openCloseModal()
+    }
+
+    function changeNoteType(type) {
+        setNote((prevNote)=>({...prevNote , 'type' : type}))
+        if (type === 'todos') {
+            setNote((prev) => ({ ...prev, 'todos': ['new task'] }))
+        }
+    }
+
+    function addTodo() {
+        setNote((prev => ({ ...prev, 'todos': [...note.todos, 'new task'] })))
+    }
+
+    return (
+        <main className="add-note">
+            <div className="add-note-modal">
+                <h1>Add a new note</h1>
+                <div className="note-details">
+                    <input className="title" placeholder="Title" onChange={handleChange} value={note.title} name="title" />
+                    {note.type === 'txt'
+                        ?
+                        <textarea placeholder="text" onChange={handleChange} value={note.txt} name='txt' />
+                        : note.type === 'img'
+                            ?
+                            <input type='file' onChange={onUploadImg} name='url' />
+                            : note.type === 'todos'
+                                ?
+                                note.todos.map((todo, idx) =>
+                                    <div key={idx}>
+                                        <input type='text' onChange={(ev) => handleChange(ev, idx)} value={todo} name='todos' />
+                                        <button onClick={addTodo}>+</button>
+                                    </div>
+                                )
+                                :
+                                 <input type='video' onChange={handleChange} name='url' placeholder="Copy from youtube the url" />
+                    }
+
+                </div>
+                <div className="type-btns">
+                    <button title="Video" onClick={() => changeNoteType('video')} className={note.type === 'video' ? 'active' : ''}><FontAwesomeIcon icon={faPlayCircle} /></button>
+                    <button title="List" onClick={() => changeNoteType('todos')} className={note.type === 'todos' ? 'active' : ''}><FontAwesomeIcon icon={faCircleCheck} /></button>
+                    <button title="Text" onClick={() => changeNoteType('txt')} className={note.type === 'txt' ? 'active' : ''}><FontAwesomeIcon icon={faClipboard} /></button>
+                    <button title="Image" onClick={() => changeNoteType('img')} className={note.type === 'img' ? 'active' : ''}><FontAwesomeIcon icon={faImage} /></button>
+                </div>
+                <button className="done-btn" onClick={onSaveNote}><FontAwesomeIcon icon={faCheck} /></button>
+            </div>
+            <div className="full-screen" onClick={openCloseModal}>
+            </div>
+        </main>
+    )
 }
+

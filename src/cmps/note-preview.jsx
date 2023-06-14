@@ -1,71 +1,68 @@
-import { useState } from "react"
-import { Link } from "react-router-dom"
+import { useEffect, useState } from "react"
 
 import { NotePreviewByType } from "./note-preview-type.jsx"
-import { NoteEdit } from "./note-edit.jsx"
-import { NoteService } from "../services/note-service.js"
+import { faTrashCan } from '@fortawesome/free-regular-svg-icons'
+import { faThumbTack, faPalette } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { loadNotes, pinNote, removeNote, updateColor } from "../store/actions.js"
 
-export function NotePreview({ note, loadNotes }) {
-    const [isPalette, setIsPalette] = useState(false)
-    const [isEdit, setIsEdit] = useState(false)
-    const [isSelected, setIsSelected] = useState(false)
+export function NotePreview({ currNote, openCloseModal }) {
+    const [isColorsShown, setIsColorsShown] = useState(false)
+    const [note, setNote] = useState(currNote)
 
-    function onRemoveNote(ev) {
+    useEffect(() => {
+        setNote(currNote)
+    }, [currNote])
+
+
+    async function onChangeColor(ev) {
         ev.stopPropagation()
-        NoteService.remove(note.id).then(() => {
-            loadNotes()
-        })
+        const color = ev.target.value
+        await updateColor(note, color)
+        setIsColorsShown(false)
+        loadNotes()
     }
 
-    function onChangeColor(ev) {
+    async function onPinNote(ev) {
         ev.stopPropagation()
-        NoteService.setNoteColor(note, ev.target.value)
-            .then(() => loadNotes()
-            )
-    }
-
-    function onPinNote() {
-        NoteService.pinNote(note).then(() => {
-            loadNotes()
-        })
+        await pinNote(note , !note.isPinned)
+        loadNotes()
     }
 
     function onPalette(ev) {
         ev.stopPropagation()
-        setIsPalette(!isPalette)
+        setIsColorsShown(!isColorsShown)
     }
 
-    function onEditNote() {
-        setIsEdit(!isEdit)
-    }
-
-    function onDuplicateNote() {
-        note.id = ''
-        console.log(note);
-        NoteService.save(note).then(() => {
-            loadNotes()
-        })
-    }
-
-    function onSelectNote() {
-        setIsSelected(!isSelected)
-    }
-
-    return <div className="note-preview" style={{ backgroundColor: `${note.color}` }} onClick={onSelectNote} >
-        {!isEdit && <NotePreviewByType note={note} loadNotes={loadNotes} />}
-        {
-            isEdit && <div className="nested-route">
-                <NoteEdit note={note} loadNotes={loadNotes} setIsEdit={setIsEdit} />
-            </div>
+    async function onDeleteNote(ev) {
+        ev.stopPropagation()
+        try {
+            await removeNote(note._id)
+        } catch (err) {
+            console.log(err)
         }
-        <div className={isSelected ? "selected" + " note-btns" : "" + " note-btns"}>
-            <button title="Pin" onClick={onPinNote} className={note.isPinned ? "pin" : ''}><span className="fa-solid fa-pin"></span></button>
-            <button title="Delete" onClick={onRemoveNote}><span className="fa-solid fa-trash"></span></button>
-            <button title="Duplicate" onClick={onDuplicateNote}><span className="fa-solid fa-copy"></span></button>
-            <button title="Change color" onClick={onPalette}><span className="fa-solid fa-palette" ></span></button>
-            <button title="Edit" onClick={onEditNote}><span className={isEdit ? "" : "fa-solid fa-edit"} ></span></button>
-            <Link title="Send as mail" to={`/mail/new/${note.id}`}><span className="fa-solid fa-envelope"></span></Link>
-            {isPalette && <input className="palette" type="color" value={note.color} onChange={(event) => onChangeColor(event)} />}
+    }
+
+    return <div onClick={() => openCloseModal(note)} className="note-preview" style={{ backgroundColor: `${note.color}`, boxShadow: 'rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px' }} >
+        <NotePreviewByType note={note} setNote={setNote} />
+        <div className=" note-btns">
+            <button title="Pin" onClick={onPinNote} className={note.isPinned ? "pin" : ""}>
+                <FontAwesomeIcon icon={faThumbTack} />
+            </button>
+            <button title="Change-color" onClick={onPalette}><FontAwesomeIcon icon={faPalette} /></button>
+            {isColorsShown &&
+                <div className="colors">
+                    <button onClick={onChangeColor} value='#FFFFFF' style={{ backgroundColor: '#FFFFFF', width: '20px', height: '20px', borderRadius: '50%' }}></button>
+                    <button onClick={onChangeColor} value='#f9f2ec' style={{ backgroundColor: '#f9f2ec', width: '20px', height: '20px', borderRadius: '50%' }}></button>
+                    <button onClick={onChangeColor} value='#B0E0E6' style={{ backgroundColor: '#B0E0E6', width: '20px', height: '20px', borderRadius: '50%' }}></button>
+                    <button onClick={onChangeColor} value='#8FBC8F' style={{ backgroundColor: '#8FBC8F', width: '20px', height: '20px', borderRadius: '50%' }}></button>
+                    <button onClick={onChangeColor} value='#DDA0DD' style={{ backgroundColor: '#DDA0DD', width: '20px', height: '20px', borderRadius: '50%' }}></button>
+                    <button onClick={onChangeColor} value='#FFB6C1' style={{ backgroundColor: '#FFB6C1', width: '20px', height: '20px', borderRadius: '50%' }}></button>
+                </div>
+            }
+            <button className="delete-btn" onClick={onDeleteNote}>
+                <FontAwesomeIcon icon={faTrashCan} />
+            </button>
         </div>
     </div >
 

@@ -1,29 +1,33 @@
+import { useState } from "react"
 
 
-export function NotePreviewByType({ note}) {
-    
+export function NotePreviewByType({ note }) {
+
     switch (note.type) {
-        case 'note-txt':
+        case 'txt':
             return <div className="note-content">
-                <h3>{note.info.title}</h3>
-                <p>{note.info.txt}</p>
+                <h1>{note.title}</h1>
+                <pre>{note.txt}</pre>
             </div>
-        case 'note-img':
+        case 'img':
             return <div className="note-content">
-                <img className="note-img" src={note.info.url} />
-                <h4>{note.info.title}</h4>
+                <h1>{note.title}</h1>
+                <img className="note-img" src={note.url} />
             </div>
-        case 'note-todos':
+        case 'todos':
             return <div className="note-content">
-                <h3>{note.info.title}</h3>
+                <h1>{note.title}</h1>
                 <ul>
-                    {note.info.todos.map((todo, idx) => <li key={idx}>{todo.txt}</li>)}
+                    {note.todos.map((todo, idx) => <li className="todo" key={idx}>
+                        <input style={{ accentColor: 'gray', margin: '5px' }} type='checkbox' onClick={(ev)=>ev.stopPropagation()}/>
+                        {todo}
+                    </li>)}
                 </ul>
             </div>
-        case 'note-video':
+        case 'video':
             return <div className="note-content">
-                <iframe width="100% "height="100%" src={`https://www.youtube.com/embed/${note.videoId}`} title="Youtube Player" frameBorder="0" allowFullScreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"/>
-                <h3>{note.title}</h3>
+                <h1>{note.title}</h1>
+                <iframe width="100% " height="100%" src={`https://www.youtube.com/embed/${note.videoId}`} title="Youtube Player" frameBorder="0" allowFullScreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" />
             </div>
     }
 }

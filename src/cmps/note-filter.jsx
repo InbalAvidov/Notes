@@ -1,45 +1,39 @@
 import { useEffect, useState } from "react"
-import { NoteService } from "../services/note-service"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faThumbTack } from '@fortawesome/free-solid-svg-icons'
+
+import { noteService } from "../services/note-service"
+import { loadNotes } from "../store/actions"
 
 
-export function NoteFilter({ setFilterBy }) {
-    const [filterByToEdit, setFilterByToEdit] = useState(NoteService.getDefaultFilter())
-    const [checked, setChecked] = useState(false)
+export function NoteFilter() {
+    const [filterBy, setFilterBy] = useState(noteService.getDefaultFilter())
+    const [isPinnedNotes, setIsPinnedNotes] = useState(false)
 
     useEffect(() => {
-        setFilterBy(filterByToEdit)
-    }, [filterByToEdit])
+        console.log('filterBy:',filterBy)
+        loadNotes(filterBy)
+    }, [filterBy])
 
     function handleChange({ target }) {
         let { value, name: field } = target
-        if (field === 'pin') {
-            setChecked(!checked)
-            value = !checked
-        }
-        setFilterByToEdit((prevFilter) => ({ ...prevFilter, [field]: value }))
+        setFilterBy((prevFilter) => ({ ...prevFilter, [field]: value }))
     }
 
-    function onSubmitFilter(ev) {
-        ev.preventDefault()
-        setFilterBy(filterByToEdit)
+    function pinnedNotes() {
+        setIsPinnedNotes(!isPinnedNotes)
+        setFilterBy((prevFilter) => ({ ...prevFilter, 'pin': !isPinnedNotes }))
     }
 
-    return <div className="note-filter">
-            <label htmlFor="pin"><span className="fa-solid fa-pin"></span>
-                <input style={{ accentColor: 'black' }} name="pin" id="pin" type="checkbox" onChange={handleChange} />
-            </label>
-            <div className="search-bar">
-                <input name="txt" placeholder="search..." value={filterByToEdit.txt} onChange={handleChange} />
-                <button onSubmit={onSubmitFilter}><span className="fa-solid fa-search"></span></button>
-            </div>
-            <label htmlFor="type" className="label-type">
-                <select className="select-type" name="type" id="type" onChange={handleChange}>
-                    <option name="type" value="">All</option>
-                    <option name="type" value="note-txt">Text</option>
-                    <option name="type" value="note-todos">List</option>
-                    <option name="type" value="note-img">Image</option>
-                    <option name="type" value="note-video">video</option>
-                </select>
-            </label>
+    return <div className='filter-area'>
+        <div className="search-bar">
+            <button className='search'>
+                <svg fill="#727272" role='img' height='22' width='22' aria-hidden='true' className='Svg-sc-ytk21e-0 uPxdw search-icon' viewBox='0 0 24 24' data-encore-id='icon'><path d='M10.533 1.279c-5.18 0-9.407 4.14-9.407 9.279s4.226 9.279 9.407 9.279c2.234 0 4.29-.77 5.907-2.058l4.353 4.353a1 1 0 101.414-1.414l-4.344-4.344a9.157 9.157 0 002.077-5.816c0-5.14-4.226-9.28-9.407-9.28zm-7.407 9.279c0-4.006 3.302-7.28 7.407-7.28s7.407 3.274 7.407 7.28-3.302 7.279-7.407 7.279-7.407-3.273-7.407-7.28z'></path></svg>
+            </button>
+            <input name="txt" placeholder="Search" value={filterBy.txt} onChange={handleChange} />
+        </div>
+        <div className={isPinnedNotes ? 'pinned pin-filter-box' : "pin-filter-box"} onClick={pinnedNotes}>
+            <FontAwesomeIcon icon={faThumbTack} style={{ fontSize: '16px', color: isPinnedNotes ? 'white' : 'gray' }} />
+        </div>
     </div>
 }

@@ -1,35 +1,33 @@
+import { useSelector } from "react-redux"
 import { useEffect, useState } from "react"
 
-import { NoteAdd } from "../cmps/note-add.jsx"
-import { NoteFilter } from "../cmps/note-filter.jsx"
-import { NoteList } from "../cmps/note-list.jsx"
-import { NoteService } from "../services/note-service.js"
-
+import { NoteList } from "../cmps/note-list"
+import { loadNotes } from "../store/actions"
+import { NoteAdd } from "../cmps/note-add"
+import { faPlus } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
 export function NoteIndex() {
+    const notes = useSelector((storeState => storeState.notesModule.notes))
 
-    const [notes, setNotes] = useState([])
-    const [filterBy, setFilterBy] = useState(NoteService.getDefaultFilter())
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [editNote, setEditNote] = useState(null)
 
     useEffect(() => {
         loadNotes()
-    }, [filterBy])
+    }, [])
 
-
-    function loadNotes() {
-        NoteService.query(filterBy)
-            .then(notes => {
-                setNotes(notes)
-            })
+    function openCloseModal(note) {
+        setEditNote(note || null)
+        setIsModalOpen(!isModalOpen)
     }
 
     return <main className="main-notes">
-            <div className="note-section">
-                <NoteFilter setFilterBy={setFilterBy} />
-                <NoteAdd loadNotes={loadNotes} />
-                {notes && <NoteList notes={notes} loadNotes={loadNotes} />}
-                {!notes.length || !notes && <h2>No results...</h2>}
-            </div>
+        {isModalOpen && <NoteAdd openCloseModal={openCloseModal} editNote={editNote} />}
+        <div className="add-note-btn" onClick={() => openCloseModal()}>
+            <FontAwesomeIcon icon={faPlus} />
+        </div>
+        <NoteList notes={notes} openCloseModal={openCloseModal} />
     </main>
 
 }

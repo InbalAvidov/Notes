@@ -1,0 +1,14 @@
+.main-layout{
+    display: grid;
+    grid-template-columns: $desktop_padding 1fr $desktop_padding;
+
+    >*:not(.full){
+        grid-column: 2/3;
+    }
+
+    .full{
+        grid-column: 1/-1;
+        padding-left: $desktop_padding;
+        padding-right: $desktop_padding;
+    }
+}

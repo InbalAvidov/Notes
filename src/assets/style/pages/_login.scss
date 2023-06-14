@@ -1,0 +1,100 @@
+.login-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    position: absolute;
+    z-index: 200;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+
+    .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 20px;
+        padding-bottom: 20px;
+
+        h1 {
+            color: black;
+            font-size: 2em;
+        }
+
+        .logo-img {
+            width: 55px;
+        }
+    }
+
+    h2 {
+        color: black;
+        text-align: center;
+    }
+}
+
+.guest-btn {
+    margin: auto;
+    width: fit-content;
+    color: black;
+    background-color: inherit;
+    border: 1px solid;
+    border-radius: 25px;
+    padding: 12px;
+    padding-inline: 90px;
+}
+
+
+// Define grid container
+.login-form {
+    height: 100vh;
+    grid-row: 2 / 3;
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    label {
+        width: 400px;
+        color: black;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        h2 {
+            font-size: 1.2em;
+        }
+
+        input {
+            width: 300px;
+            padding: 12px 5px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+    }
+
+
+    button {
+        width: 150px;
+        padding: 14px 20px;
+        background-color: $brand-color;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 1.2rem;
+        margin-top: 10px;
+        margin-bottom: 10px;
+
+    }
+
+    a{
+        font-weight: 600;
+        font-size: 1.1em;
+
+        &:hover{
+            text-decoration: underline;
+        }
+    }
+
+}
