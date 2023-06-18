@@ -5,10 +5,8 @@ import { useEffect } from 'react'
 
 import { signup, login } from '../store/actions.js'
 import { utilService } from '../services/util-service.js'
-import note from '../assets/imgs/note.png'
+import note from '../assets/imgs/logo.jpg'
 import { userService } from '../services/user-service.js'
-
-// import { showErrorMsg } from '../service/event-bus.service.js'
 
 export function LoginSignup() {
 
@@ -42,7 +40,7 @@ export function LoginSignup() {
             })
             navigate('/')
         } catch (err) {
-            // showErrorMsg('Had problem to log in')
+            console.log('err:',err)
         }
     }
 
@@ -54,13 +52,13 @@ export function LoginSignup() {
                 navigate('/')
             }
             catch (err) {
-                // showErrorMsg('Had problem to sign up')
+                console.log('err:',err)
             }
         else try {
             await login(credentials)
             navigate('/')
         } catch (err) {
-            // showErrorMsg('Had problem to log in')
+            console.log('err:',err)
         }
     }
 

@@ -6,12 +6,12 @@
 
 import { NotePreview } from "./note-preview";
 
-export function NoteList({ openCloseModal, notes }) {
+export function NoteList({ notes }) {
 
     return <div className="note-list ">
         {notes.length > 0 ?
             notes.map(note => (
-                <NotePreview currNote={note} openCloseModal={openCloseModal} />
+                <NotePreview currNote={note} />
             ))
             :
             <h2>No notes, create a new one now!</h2>

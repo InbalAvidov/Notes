@@ -1,9 +1,9 @@
 import { useSelector } from 'react-redux'
-import note from '../assets/imgs/note.png'
+import note from '../assets/imgs/logo.jpg'
 
 import { NoteFilter } from './note-filter'
 import { NavLink } from 'react-router-dom'
-import { logout } from '../store/actions'
+import { loadNotes, logout } from '../store/actions'
 import { useEffect, useState } from 'react'
 
 export function AppHeader() {
@@ -16,6 +16,7 @@ export function AppHeader() {
 
     function onLogout() {
         logout()
+        loadNotes()
     }
 
     function changeContent(content){

@@ -8,7 +8,6 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import { AppHeader } from "./cmps/app-header";
 import { NoteIndex } from "./pages/note-index";
 import { store } from "./store/store.js";
-import { NoteAdd } from "./cmps/note-add";
 import { LoginSignup } from "./pages/login-signup";
 
 

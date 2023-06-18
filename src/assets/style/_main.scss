@@ -1,17 +1,14 @@
 @import "setup/_vars.scss";
-@import "setup/_helpers.scss";
 @import "setup/_typography.scss";
-
 
 @import "basics/_basic.scss";
 @import "basics/_layout.scss";
 
-@import "pages/_note.scss";
+@import "pages/_note-index.scss";
 @import "pages/_login.scss";
-
 
 @import "cmps/_header.scss";
 @import "cmps/_note-list.scss";
 @import "cmps/_note-preview.scss";
-@import "cmps/_add-note-modal.scss";
+@import "cmps/_note-add.scss";
 @import "cmps/_note-filter.scss";

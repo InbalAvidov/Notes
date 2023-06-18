@@ -26,11 +26,8 @@ export async function loadCurrNote(noteId) {
 
 export async function saveNote(note) {
     try {
-        console.log(note)
-        const newNote = await noteService.save(note)
-        console.log(newNote)
-        store.dispatch({ type: ADD_NOTE, note: newNote })
-        return newNote
+        await noteService.save(note)
+        store.dispatch({ type: ADD_NOTE, note })
     } catch (err) {
         console.log('Had issues to get current note', err)
         throw err

@@ -5,47 +5,103 @@
    padding: 10px;
    border-radius: 5px;
    grid-row: span 1;
+   box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
 
    .note-content {
       height: 85%;
       display: flex;
       flex-direction: column;
+
+      input,
+      textarea {
+         width: 100%;
+         margin: 0;
+         box-shadow: none;
+         outline: none;
+         font-size: 1.2em;
+
+         &.title {
+            font-size: 1.6em;
+            padding: 5px 0;
+         }
+
+         &.file-input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+         }
+
+         &.txt {
+            padding: 15px 0;
+         }
+
+         &.todo-edit {
+            font-size: 1em;
+         }
+      }
+
+      .upload-img {
+         position: relative;
+         display: flex;
+         align-items: center;
+         
+         input {
+            position: absolute;
+            opacity: 0;
+            width: 70%;
+            height: 100%;
+            cursor: pointer;
+         }
+      }
    }
 
-   iframe {
-      height: 80%;
+   &.edit {
+      border: 1.8px solid black;
    }
 
    h1 {
-      font-size: 1.4em;
+      font-size: 1.6em;
       font-weight: 700;
       margin-bottom: .3em;
    }
 
-   p {
+   pre,
+   li {
       font-size: 1.2em;
    }
 
    img {
       max-height: 60%;
       width: 70%;
-      margin: auto;
+      margin: 10px auto;
    }
 
    .todo {
       display: flex;
-      font-size: 1.2em;
+      font-weight: 600;
+
+      li {
+         font-size: 1.2em;
+      }
 
       input {
-         width: 20px;
-         height: 20px;
+         height: 17px;
          box-shadow: none;
+         margin-bottom: 0;
+
+         &:not(.todo-edit) {
+            width: 17px;
+         }
       }
 
    }
 
+
    .note-btns {
       margin-bottom: .3em;
+      display: flex;
+      justify-content: space-between;
 
       button {
          opacity: 0;
@@ -55,6 +111,10 @@
          &.pin {
             opacity: 1;
          }
+      }
+
+      .shown {
+         opacity: 1;
       }
 
    }
