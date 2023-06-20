@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react"
+import Swal from 'sweetalert2'
+
 
 import { NoteContent } from "./note-content.jsx"
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons'
@@ -38,9 +40,22 @@ export function NotePreview({ currNote }) {
     async function onDeleteNote(ev) {
         ev.stopPropagation()
         try {
-            await removeNote(note._id)
+            const result = await Swal.fire({
+                title: 'Do you want to delete this note?',
+                text: 'You won\'t be able to reverse this!',
+                showCancelButton: true,
+                background: '#ffffff',
+                color: '#000000',
+                confirmButtonColor: '#40cde0',
+                cancelButtonColor: '#000000',
+                confirmButtonText: 'Yes, delete it!'
+            })
+            if (result.isConfirmed) {
+                console.log('note:',note)
+                await removeNote(note._id)
+            }
         } catch (err) {
-            console.log(err)
+            console.log('cant Swal', err)
         }
     }
 
@@ -53,7 +68,7 @@ export function NotePreview({ currNote }) {
         <NoteContent note={note} setNote={setNote} isEdit={isEdit} />
             <div className="note-btns">
                 <div>
-                    <button title="Pin" onClick={onPinNote} className={note.isPinned ? "pin" : ""}>
+                    <button title="Pin" onClick={onPinNote} className={note.isPinned ? "pin" : ""} style={{color : note.isPinned ? '#40cde0' : 'black'}}>
                         <FontAwesomeIcon icon={faThumbTack} />
                     </button>
                     <button title="Change-color" onClick={onPalette}><FontAwesomeIcon icon={faPalette} /></button>
@@ -71,7 +86,7 @@ export function NotePreview({ currNote }) {
                         <FontAwesomeIcon icon={faTrashCan} />
                     </button>
                 </div>
-                <button className={isEdit && "shown"} onClick={onEditNote}>
+                <button className={isEdit ? "shown" : ""} onClick={onEditNote}>
                     <FontAwesomeIcon icon={isEdit ? faCheck : faEdit} />
                 </button>
             </div>

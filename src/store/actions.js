@@ -1,12 +1,24 @@
-import { noteService } from "../services/note-service.js"
-import { userService } from "../services/user-service.js"
-import { SET_NOTES, UPDATE_CURRENT_NOTE, ADD_NOTE, UPDATE_NOTE, REMOVE_NOTE, UPDATE_COLOR, PIN_NOTE, SET_USER } from "./reducer.js"
+import { noteServiceLocal } from "../services/note.local.service.js"
+import { noteService } from "../services/note.service.js"
+import { userService } from "../services/user.service.js"
+import { utilService } from "../services/util.service.js"
+import { SET_NOTES, ADD_NOTE, UPDATE_NOTE, REMOVE_NOTE, UPDATE_COLOR, PIN_NOTE, SET_USER } from "./reducer.js"
 import { store } from "./store"
 
+let userName = ''
+
+function getUserName() {
+    const user = userService.getLoggedinUser()
+    console.log('user:',user)
+    if (user) userName = user.userName
+}
+
 export async function loadNotes(filterBy) {
+    getUserName()
     try {
-        const notes = await noteService.query(filterBy)
-        console.log('notes:',notes)
+        let notes
+        if (userName === 'guest') notes = await noteServiceLocal.query(filterBy)
+        else notes = await noteService.query(filterBy)
         store.dispatch({ type: SET_NOTES, notes })
     } catch (err) {
         console.log('Had issues loading notes', err)
@@ -14,19 +26,10 @@ export async function loadNotes(filterBy) {
     }
 }
 
-export async function loadCurrNote(noteId) {
-    try {
-        const note = await noteService.get(noteId)
-        store.dispatch({ type: UPDATE_CURRENT_NOTE, note })
-    } catch (err) {
-        console.log('Had issues loading current note', err)
-        throw err
-    }
-}
-
 export async function saveNote(note) {
     try {
-        await noteService.save(note)
+        if (userName === 'guest') await noteServiceLocal.save(note)
+        else await noteService.save(note)
         store.dispatch({ type: ADD_NOTE, note })
     } catch (err) {
         console.log('Had issues to get current note', err)
@@ -36,9 +39,9 @@ export async function saveNote(note) {
 
 export async function updateNote(note) {
     try {
-        const updatedNote = await noteService.save(note)
-        store.dispatch({ type: UPDATE_NOTE, note: updatedNote })
-        return updatedNote
+        if (userName === 'guest') await noteServiceLocal.save(note)
+        else await noteService.save(note)
+        store.dispatch({ type: UPDATE_NOTE, note })
     } catch (err) {
         console.log('Had issues to get current note', err)
         throw err
@@ -47,7 +50,9 @@ export async function updateNote(note) {
 
 export async function updateColor(note, color) {
     try {
-        const updatedNote = await noteService.save({ ...note, color })
+        const updatedNote = ({ ...note, color })
+        if (userName === 'guest') await noteServiceLocal.save(updatedNote)
+        else await noteService.save(updatedNote)
         store.dispatch({ type: UPDATE_COLOR, note: updatedNote })
         return updatedNote
     } catch (err) {
@@ -58,7 +63,9 @@ export async function updateColor(note, color) {
 
 export async function pinNote(note, isPinned) {
     try {
-        const updatedNote = await noteService.save({ ...note, isPinned })
+        const updatedNote = ({ ...note, isPinned })
+        if (userName === 'guest') await noteServiceLocal.save(updatedNote)
+        else await noteService.save(updatedNote)
         store.dispatch({ type: PIN_NOTE, note: updatedNote })
         return updatedNote
     } catch (err) {
@@ -69,7 +76,8 @@ export async function pinNote(note, isPinned) {
 
 export async function removeNote(noteId) {
     try {
-        await noteService.remove(noteId)
+        if (userName === 'guest') await noteServiceLocal.remove(noteId)
+        else await noteService.remove(noteId)
         store.dispatch({ type: REMOVE_NOTE, noteId })
     } catch (err) {
         console.log('Had issues to get current note', err)
@@ -88,10 +96,21 @@ export async function login(credentials) {
     }
 }
 
+export async function loginAsGuest() {
+    try {
+        const user = { userName: 'guest', _id: utilService.makeId() }
+        userService.saveLocalUser(user)
+        store.dispatch({ type: SET_USER, user })
+        return user
+    } catch (err) {
+        console.error('Cannot login:', err)
+        throw err
+    }
+}
+
 export async function signup(credentials) {
     try {
         const user = await userService.signup(credentials)
-        console.log('user:', user)
         store.dispatch({ type: SET_USER, user })
         return user
     } catch (err) {

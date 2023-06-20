@@ -103,11 +103,16 @@
       display: flex;
       justify-content: space-between;
 
+      
+      
       button {
          opacity: 0;
          cursor: pointer;
          background-color: inherit;
-
+         
+         @media (max-width: $mobile_size) {
+            opacity: 1;
+        }
          &.pin {
             opacity: 1;
          }

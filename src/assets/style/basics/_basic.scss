@@ -12,9 +12,10 @@ html {
     color: $text;
     line-height: 1.8;
     background-color: $bgc;
+    font-size: 12px;
 
-    @media (max-width: 1300px) {
-        font-size: 13px;
+    @media (min-width: $mobile_size) {
+        font-size: 14px;
     }
 }
 
@@ -78,6 +79,10 @@ button {
     cursor: pointer;
     border: none;
     font-size: 1.3em;
+
+    @media (max-width: $mobile_size) {
+        font-size: 1.5em;
+    }
 }
 
 input,

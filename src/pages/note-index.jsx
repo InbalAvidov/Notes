@@ -7,14 +7,21 @@ import { NoteAdd } from "../cmps/note-add"
 
 export function NoteIndex() {
     const notes = useSelector((storeState => storeState.notesModule.notes))
+    const user = useSelector((storeState => storeState.notesModule.user))
+    
 
     useEffect(() => {
+        console.log('load Notes')
         loadNotes()
-    }, [])
+    }, [user])
+
+    useEffect(() => {
+        console.log('load Notes')
+    }, [user])
 
     return <main className="main-notes">
-        <NoteAdd />
+        < NoteAdd />
         <NoteList notes={notes} />
-    </main>
+    </main >
 
 }

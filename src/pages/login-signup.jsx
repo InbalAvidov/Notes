@@ -3,10 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 
-import { signup, login } from '../store/actions.js'
-import { utilService } from '../services/util-service.js'
+import { signup, login, loginAsGuest } from '../store/actions.js'
 import note from '../assets/imgs/logo.jpg'
-import { userService } from '../services/user-service.js'
+import { userService } from '../services/user.service.js'
 
 export function LoginSignup() {
 
@@ -31,19 +30,6 @@ export function LoginSignup() {
         setCredentials((prevCreds) => ({ ...prevCreds, [field]: value }))
     }
 
-    async function loginAsGuest() {
-        try {
-            await login({
-                _id: utilService.makeId(),
-                username: 'guest',
-                password: 'guest',
-            })
-            navigate('/')
-        } catch (err) {
-            console.log('err:',err)
-        }
-    }
-
     async function onSubmit(ev) {
         ev.preventDefault();
         if (isSignupState)
@@ -62,6 +48,11 @@ export function LoginSignup() {
         }
     }
 
+    function onLoginAsGuest(){
+        loginAsGuest()
+        navigate('/')
+    }
+
     return (
         <section className="login-signup">
             <div className="login-page">
@@ -71,7 +62,7 @@ export function LoginSignup() {
                         <h1>Notes</h1>
                     </div>
                 </header>
-                <button className="guest-btn" onClick={loginAsGuest}>Login as a guest</button>
+                <button className="guest-btn" onClick={onLoginAsGuest}>Login as a guest</button>
                 <form className="login-form " onSubmit={onSubmit}>
                     <label>
                         <h2>
@@ -132,7 +123,7 @@ export function LoginSignup() {
                         </label>
                     }
                     <button className="registration-btn">{isSignupState ? "Signup" : "Login"}</button>
-                    <a href="#" onClick={onToggleSignupState}>
+                    <a href="#" onClick={onToggleSignupState} >
                         {isSignupState ? "Have an account? Login" : "Don\"t have an account? Sign up here"}
                     </a>
                 </form>

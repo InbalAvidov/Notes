@@ -1,4 +1,4 @@
-import { userService } from "../services/user-service"
+import { userService } from "../services/user.service"
 
 export const SET_NOTES = 'SET_NOTES'
 export const REMOVE_NOTE = 'REMOVE_NOTE'

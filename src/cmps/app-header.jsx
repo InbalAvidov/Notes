@@ -1,38 +1,44 @@
 import { useSelector } from 'react-redux'
-import note from '../assets/imgs/logo.jpg'
-
-import { NoteFilter } from './note-filter'
 import { NavLink } from 'react-router-dom'
-import { loadNotes, logout } from '../store/actions'
 import { useEffect, useState } from 'react'
+
+import note from '../assets/imgs/logo.jpg'
+import { NoteFilter } from './note-filter'
+import { loadNotes, logout } from '../store/actions'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faUser} from '@fortawesome/free-regular-svg-icons'
 
 export function AppHeader() {
     const user = useSelector((storeState => storeState.notesModule.user))
     const [content, setContent] = useState('')
+    const [isShowLogout, setIsShowLogout] = useState(false)
 
-    useEffect(()=>{
-        if(user) setContent(user.userName)
-    },[user])
+    useEffect(() => {
+        if (user) setContent(user.userName)
+    }, [user])
 
     function onLogout() {
         logout()
         loadNotes()
     }
 
-    function changeContent(content){
+    function changeContent(content) {
         setContent(content)
     }
 
     return (
         <header className='full'>
-            <div className='nav-area'>
+            <div className='logo-area'>
                 <img src={note} />
                 <h1>Notes</h1>
             </div>
-            <NoteFilter />
+            {user && <NoteFilter />}
             {user ?
-                <div className='user-icon' onMouseOver={() => changeContent('logout')} onMouseLeave={() => changeContent(user.userName)} onClick={onLogout}>
-                    <h2>{content}</h2>
+                <div className={ isShowLogout ? 'show-logout user-icon' : 'user-icon'} onMouseOver={() => changeContent('logout')} onMouseLeave={() => changeContent(user.userName)} >
+                    <h2 onClick={onLogout}>
+                        {content}
+                    </h2>
+                        <FontAwesomeIcon icon={faUser} onClick={()=>setIsShowLogout(!isShowLogout)} />
                 </div>
                 :
                 <NavLink to='/login' className='login-btn'>

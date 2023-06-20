@@ -39,6 +39,8 @@ async function signup(userCred) {
 async function logout() {
     await httpService.post(AUTH_URL + 'logout')
     sessionStorage.removeItem(STORAGE_KEY_LOGGEDIN_USER)
+    localStorage.clear()
+    
 }
 
 async function update(user) {
@@ -48,7 +50,6 @@ async function update(user) {
 }
 
 function saveLocalUser(user) {
-    console.log('user:',user)
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     return user
 }
@@ -70,7 +71,7 @@ function getEmptyCredentials() {
 
 
 // import { storageService } from './async-storage.service'
-// import { utilService } from './util-service'
+// import { utilService } from './util.service'
 
 // const STORAGE_KEY_LOGGEDIN_USER = 'loggedinUser'
 // const USERS_KEY = 'users'

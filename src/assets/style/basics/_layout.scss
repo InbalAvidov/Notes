@@ -1,14 +1,25 @@
-.main-layout{
+.main-layout {
     display: grid;
-    grid-template-columns: $desktop_padding 1fr $desktop_padding;
+    grid-template-columns: $mobile_padding 1fr $mobile_padding;
 
-    >*:not(.full){
+    @media (min-width: $mobile_size) {
+        grid-template-columns: $desktop_padding 1fr $desktop_padding;
+    }
+
+    >*:not(.full) {
         grid-column: 2/3;
     }
 
-    .full{
+    .full {
         grid-column: 1/-1;
-        padding-left: $desktop_padding;
-        padding-right: $desktop_padding;
+        padding-left: $mobile_padding;
+        padding-right: $mobile_padding;
+
+        @media (min-width: $mobile_size) {
+            padding-left: $desktop_padding;
+            padding-right: $desktop_padding;
+
+        }
     }
+
 }

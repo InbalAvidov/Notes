@@ -5,7 +5,7 @@
     align-items: center;
     background-color: white;
     position: absolute;
-    z-index: 200;
+    z-index: 2;
     top: 0;
     left: 0;
     height: 100vh;
@@ -32,6 +32,7 @@
         color: black;
         text-align: center;
     }
+
 }
 
 .guest-btn {
@@ -97,7 +98,7 @@
 
     a {
         font-weight: 600;
-        font-size: 1.1em;
+        font-size: 1.3em;
 
         &:hover {
             text-decoration: underline;
